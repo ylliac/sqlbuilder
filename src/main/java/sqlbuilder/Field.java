@@ -1,6 +1,6 @@
 package sqlbuilder;
 
-public class Field implements Select, OrderBy {
+public class Field implements Select, OrderBy, ConditionOperand {
 
 	private String name;
 
@@ -12,28 +12,32 @@ public class Field implements Select, OrderBy {
 		this.name = name;
 	}
 
-	public Condition equal(Field field2) {
-		String condition = this.getSQL() + " = " + field2.getSQL();
-		return SimpleCondition.create(condition);
+	public Condition equal(ConditionOperand operand2) {
+		return ConditionBuilder.create(this).equal(operand2);
 	}
 
 	public Condition equal(int value) {
-		String condition = this.getSQL() + " = " + value;
-		return SimpleCondition.create(condition);
+		return ConditionBuilder.create(this).equal(value);
 	}
 
 	public Condition equal(String value) {
-		// TODO Echapper les '
-		String condition = this.getSQL() + " = '" + value + "'";
-		return SimpleCondition.create(condition);
+		return ConditionBuilder.create(this).equal(value);
 	}
 
-	public SortAsc asc() {
-		return SortAsc.create(this);
+	public OrderBy asc() {
+		return OrderByBuilder.create(this).asc();
 	}
 
-	public SortDesc desc() {
-		return SortDesc.create(this);
+	public OrderBy desc() {
+		return OrderByBuilder.create(this).desc();
+	}
+
+	public OrderBy nullsFirst() {
+		return OrderByBuilder.create(this).nullsFirst();
+	}
+
+	public OrderBy nullsLast() {
+		return OrderByBuilder.create(this).nullsLast();
 	}
 
 	public String getSQL() {

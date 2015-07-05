@@ -10,4 +10,12 @@ public class DSL {
 		return Table.create(name);
 	}
 	
+	public static Count count(){
+		return Count.create(null);
+	}
+	
+	public static Count count(Select select){
+		return Count.create(select);
+	}
+	
 }

@@ -21,7 +21,7 @@ public class QueryTest {
 		sql = Query
 				.create()
 				.select(DSL.field("AUTHOR.FIRST_NAME"),
-						DSL.field("AUTHOR.LAST_NAME"), count())
+						DSL.field("AUTHOR.LAST_NAME"), DSL.count())
 				.from(DSL
 						.table("AUTHOR")
 						.join(DSL.table("BOOK"))
@@ -30,25 +30,8 @@ public class QueryTest {
 				.where(DSL.field("BOOK.LANGUAGE").equal("DE"))
 				.and(DSL.field("BOOK.PUBLISHED").gt(date("2008-01-01")))
 				.groupBy(DSL.field("AUTHOR.FIRST_NAME"),
-						DSL.field("AUTHOR.LAST_NAME")).having(count().gt(5))
-				.orderBy(DSL.field("AUTHOR.LAST_NAME").asc().nullsFirst()) // TODO
-																			// ACY
-																			// Passer
-																			// en
-																			// Java
-																			// 8
-																			// pour
-																			// pouvoir
-																			// ajouter
-																			// une
-																			// methode
-																			// par
-																			// défaut
-																			// à
-																			// l'interface
-																			// OrderBy
-																			// et
-																			// Select
+						DSL.field("AUTHOR.LAST_NAME")).having(DSL.count().gt(5))
+				.orderBy(DSL.field("AUTHOR.LAST_NAME").asc().nullsFirst())
 				.limit(2).offset(1).getSQL();
 
 		System.out.println(sql);
