@@ -36,12 +36,18 @@ import java.util.List;
 //SELECT clause
 //ORDER BY clause
 
+//Validateur MySQL : http://fr.piliapp.com/mysql-syntax-check/
+
 public class Query implements SQL {
 
-	private List<Select> selects = new ArrayList<>();
+	private List<Projection> selects = new ArrayList<>();
 	private From from = null;
 	private Condition where = null;
 	private List<OrderBy> orderBys = new ArrayList<>();
+	private List<GroupBy> groupBys = new ArrayList<>();
+	private Condition having = null;
+	private Integer limit = null;
+	private Integer offset = null;
 
 	public static Query create() {
 		return new Query();
@@ -51,7 +57,7 @@ public class Query implements SQL {
 
 	}
 
-	public Query select(Select... selects) {
+	public Query select(Projection... selects) {
 		this.selects.addAll(Arrays.asList(selects));
 		return this;
 	}
@@ -79,31 +85,80 @@ public class Query implements SQL {
 		return this;
 	}
 
+	public Query groupBy(GroupBy... groupBys) {
+		this.groupBys.addAll(Arrays.asList(groupBys));
+		return this;
+	}
+
+	public Query having(Condition condition) {
+		this.having = condition;
+		return this;
+	}
+
+	public Query limit(int limit) {
+		this.limit = limit;
+		return this;
+	}
+
+	public Query offset(int offset) {
+		this.offset = offset;
+		return this;
+	}
+
 	public String getSQL() {
 		StringBuilder query = new StringBuilder();
 
 		// Projections
 		query.append("SELECT ");
-		for (Select select : selects) {
-			query.append(select.getSQL());
+		if (selects.isEmpty()) {
+			query.append("*");
+		} else {
+			for (Projection select : selects) {
+				query.append(select.getSQL());
+				//TODO mettre des virgules
+			}
 		}
 
 		// Joins
-		query.append("FROM ");
-		// TODO
+		query.append(" FROM ");
+		query.append(from.getSQL());
 
 		// Restrictions
-		query.append("WHERE ");
-		// TODO
+		if (where != null) {
+			query.append(" WHERE ");
+			query.append(where.getSQL());
+		}
 
 		// Groups
-		// TODO
+		if (!groupBys.isEmpty()) {
+			query.append(" GROUP BY ");
+			for (GroupBy groupBy : groupBys) {
+				query.append(groupBy.getSQL());
+			}
+
+			// Having
+			query.append(" HAVING ");
+			query.append(having.getSQL());
+		}
 
 		// Orders
-		// TODO
+		if (!orderBys.isEmpty()) {
+			query.append(" ORDER BY ");
+			for (OrderBy orderBy : orderBys) {
+				query.append(orderBy.getSQL());
+			}
+		}
 
-		// Limits
-		// TODO
+		// Limit and offset
+		if (limit != null) {
+			query.append(" LIMIT ");
+			query.append(limit);
+		}
+
+		if (offset != null) {
+			query.append(" OFFSET ");
+			query.append(offset);
+		}
 
 		return query.toString();
 	}

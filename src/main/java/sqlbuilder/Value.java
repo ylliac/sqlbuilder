@@ -1,15 +1,26 @@
 package sqlbuilder;
 
-public class Field implements Projection, OrderBy, GroupBy, ConditionOperand {
+import org.joda.time.DateTime;
 
-	private String name;
+public class Value implements ConditionOperand {
 
-	public static Field create(String name) {
-		return new Field(name);
+	private String stringValue;
+
+	public static Value create(int value) {
+		return new Value(Integer.toString(value));
 	}
 
-	protected Field(String name) {
-		this.name = name;
+	public static Value create(String value) {
+		return new Value(value);
+	}
+
+	public static Value create(DateTime value) {
+		return new Value(value.toString("yyyy-MM-dd"));
+	}
+
+	protected Value(String value) {
+		// TODO Echapper les '
+		this.stringValue = value;
 	}
 
 	public Condition equal(ConditionOperand operand2) {
@@ -31,29 +42,14 @@ public class Field implements Projection, OrderBy, GroupBy, ConditionOperand {
 	public Condition greaterThan(String value) {
 		return ConditionBuilder.create(this).greaterThan(value);
 	}
-
+	
 	public Condition greaterThan(ConditionOperand value) {
 		return ConditionBuilder.create(this).greaterThan(value);
 	}
 
-	public OrderBy asc() {
-		return OrderByBuilder.create(this).asc();
-	}
-
-	public OrderBy desc() {
-		return OrderByBuilder.create(this).desc();
-	}
-
-	public OrderBy nullsFirst() {
-		return OrderByBuilder.create(this).nullsFirst();
-	}
-
-	public OrderBy nullsLast() {
-		return OrderByBuilder.create(this).nullsLast();
-	}
-
+	@Override
 	public String getSQL() {
-		return name;
+		return stringValue;
 	}
 
 }

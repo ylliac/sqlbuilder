@@ -28,8 +28,16 @@ public class From implements SQL {
 	}
 
 	public String getSQL() {
-		// TODO
-		return null;
+
+		StringBuilder query = new StringBuilder();
+
+		query.append(tables.get(tables.size() - 1).getSQL());
+
+		for (Join join : joins) {
+			query.append(join.getSQL());
+		}
+
+		return query.toString();
 	}
 
 }

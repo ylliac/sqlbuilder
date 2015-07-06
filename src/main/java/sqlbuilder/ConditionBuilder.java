@@ -3,7 +3,7 @@ package sqlbuilder;
 public class ConditionBuilder implements Condition {
 
 	private enum OPERATOR {
-		EQUAL
+		EQUAL, GREATER_THAN
 	}
 
 	private ConditionOperand operand1;
@@ -25,15 +25,32 @@ public class ConditionBuilder implements Condition {
 	}
 
 	public ConditionBuilder equal(int value) {
-		this.operand2 = value;
+		this.operand2 = Value.create(value);
 		this.operator = OPERATOR.EQUAL;
 		return this;
 	}
 
 	public ConditionBuilder equal(String value) {
-		// TODO Echapper les '
-		this.operand2 = value;
+		this.operand2 = Value.create(value);
 		this.operator = OPERATOR.EQUAL;
+		return this;
+	}
+
+	public ConditionBuilder greaterThan(int value) {
+		this.operand2 = Value.create(value);
+		this.operator = OPERATOR.GREATER_THAN;
+		return this;
+	}
+
+	public ConditionBuilder greaterThan(String value) {
+		this.operand2 = Value.create(value);
+		this.operator = OPERATOR.GREATER_THAN;
+		return this;
+	}
+
+	public ConditionBuilder greaterThan(ConditionOperand value) {
+		this.operand2 = value;
+		this.operator = OPERATOR.GREATER_THAN;
 		return this;
 	}
 
@@ -57,6 +74,9 @@ public class ConditionBuilder implements Condition {
 		switch (operator) {
 		case EQUAL:
 			result += " = ";
+			break;
+		case GREATER_THAN:
+			result += " > ";
 			break;
 		}
 

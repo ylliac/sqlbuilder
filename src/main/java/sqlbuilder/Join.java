@@ -28,8 +28,26 @@ public class Join implements SQL {
 	}
 
 	public String getSQL() {
-		// TODO
-		return null;
+
+		StringBuilder query = new StringBuilder();
+
+		// On considère que la première table est déja écrite
+
+		switch (type) {
+		case LEFT_JOIN:
+			query.append(" LEFT JOIN ");
+			break;
+		case INNER_JOIN:
+			query.append(" INNER JOIN ");
+			break;
+		}
+
+		query.append(table2.getSQL());
+
+		query.append(" ON ");
+		query.append(condition.getSQL());
+
+		return query.toString();
 	}
 
 }
